@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(dir C:\\\\Users\\\\Alejo\\\\Desktop\\\\Dashboard Automatizaciones:*)",
-      "Bash(java:*)"
-    ]
-  }
-}
