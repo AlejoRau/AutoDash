@@ -2,6 +2,7 @@ package com.dashboard.automations.dto;
 
 import com.dashboard.automations.model.Automation;
 import com.dashboard.automations.model.AutomationStatus;
+import com.dashboard.automations.model.TriggerType;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,8 @@ public class AutomationResponse {
     private final String name;
     private final String description;
     private final AutomationStatus status;
-    private final String triggerType;
+    private final TriggerType triggerType;
+    private final String triggerConfig;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
@@ -23,6 +25,7 @@ public class AutomationResponse {
         this.description = automation.getDescription();
         this.status = automation.getStatus();
         this.triggerType = automation.getTriggerType();
+        this.triggerConfig = automation.getTriggerConfig();
         this.createdAt = automation.getCreatedAt();
         this.updatedAt = automation.getUpdatedAt();
     }

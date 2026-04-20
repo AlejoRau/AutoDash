@@ -27,8 +27,16 @@ public class Automation {
     @Column(nullable = false)
     private AutomationStatus status = AutomationStatus.INACTIVE;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "trigger_type", nullable = false)
-    private String triggerType;
+    private TriggerType triggerType;
+
+    @Column(name = "trigger_config", columnDefinition = "TEXT")
+    private String triggerConfig;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
