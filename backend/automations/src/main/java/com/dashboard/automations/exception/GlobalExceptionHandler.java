@@ -6,6 +6,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -36,6 +38,24 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Validation error");
         return buildError(HttpStatus.BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<Map<String, Object>> handleN8nClientError(HttpClientErrorException ex) {
+        return buildError(HttpStatus.valueOf(ex.getStatusCode().value()), "n8n error: " + ex.getStatusText());
+    }
+
+    @ExceptionHandler(ResourceAccessException.class)
+    public ResponseEntity<Map<String, Object>> handleN8nConnection(ResourceAccessException ex) {
+        return buildError(HttpStatus.BAD_GATEWAY, "Could not connect to n8n instance");
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleRuntime(RuntimeException ex) {
+        if (ex.getMessage() != null && ex.getMessage().contains("n8n not configured")) {
+            return buildError(HttpStatus.BAD_REQUEST, "n8n credentials not configured");
+        }
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
     }
 
     @ExceptionHandler(Exception.class)

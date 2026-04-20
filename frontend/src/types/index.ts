@@ -32,4 +32,33 @@ export interface UserProfile {
   email: string
   role: 'USER' | 'ADMIN'
   createdAt: string
+  n8nConfigured: boolean
+}
+
+export interface N8nWorkflow {
+  id: string
+  name: string
+  active: boolean
+  createdAt: string
+  updatedAt: string
+  tags: { id: string; name: string }[]
+}
+
+export interface N8nExecution {
+  id: string
+  finished: boolean
+  mode: string
+  startedAt: string
+  stoppedAt: string | null
+  status: 'success' | 'error' | 'running' | 'waiting'
+}
+
+export interface N8nWorkflowsResponse {
+  data: N8nWorkflow[]
+  nextCursor: string | null
+}
+
+export interface N8nExecutionsResponse {
+  data: N8nExecution[]
+  nextCursor: string | null
 }

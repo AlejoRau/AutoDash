@@ -35,6 +35,12 @@ public class User {
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
 
+    @Column(name = "n8n_url")
+    private String n8nUrl;
+
+    @Column(name = "n8n_api_key")
+    private String n8nApiKey;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

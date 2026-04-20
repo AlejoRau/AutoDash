@@ -32,7 +32,7 @@ export default function RegisterPage() {
         navigate('/login')
         return
       }
-      login(res.token, { id: res.userId, name: res.name, email: res.email, createdAt: '', role: 'USER' })
+      login(res.token, { id: res.userId, name: res.name, email: res.email, createdAt: '', role: 'USER', n8nConfigured: false })
       navigate('/dashboard')
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response?.status

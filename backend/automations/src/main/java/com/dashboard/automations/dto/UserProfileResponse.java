@@ -14,6 +14,7 @@ public class UserProfileResponse {
     private final String email;
     private final UserRole role;
     private final LocalDateTime createdAt;
+    private final boolean n8nConfigured;
 
     public UserProfileResponse(User user) {
         this.id = user.getId();
@@ -21,5 +22,6 @@ public class UserProfileResponse {
         this.email = user.getEmail();
         this.role = user.getRole();
         this.createdAt = user.getCreatedAt();
+        this.n8nConfigured = user.getN8nUrl() != null && user.getN8nApiKey() != null;
     }
 }

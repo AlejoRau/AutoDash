@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { useTheme } from '@/hooks/useTheme'
 import { Button } from '@/components/ui/button'
-import { LogOut, Moon, Sun, Zap, Shield } from 'lucide-react'
+import { LogOut, Moon, Sun, Zap, Shield, Workflow } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -29,6 +29,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               )}
             >
               Automations
+            </Link>
+            <Link
+              to="/n8n"
+              className={cn(
+                'text-sm px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5',
+                location.pathname === '/n8n'
+                  ? 'bg-muted font-medium text-foreground'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+              )}
+            >
+              <Workflow className="w-3.5 h-3.5" />
+              n8n
             </Link>
             {user?.role === 'ADMIN' && (
               <Link
