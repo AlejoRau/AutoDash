@@ -33,7 +33,7 @@ function getNodeMeta(type: string) {
   }
 }
 
-function formatSchedule(node: N8nWorkflow['nodes'][0]): string {
+function formatSchedule(node: N8nWorkflowNode): string {
   const interval = node.parameters?.rule?.interval?.[0]
   if (!interval) return 'Schedule configurado'
   const hour = interval.triggerAtHour ?? 0
@@ -41,7 +41,7 @@ function formatSchedule(node: N8nWorkflow['nodes'][0]): string {
   return `Todos los días a las ${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`
 }
 
-function getScheduleHour(node: N8nWorkflow['nodes'][0]): number {
+function getScheduleHour(node: N8nWorkflowNode): number {
   return node.parameters?.rule?.interval?.[0]?.triggerAtHour ?? 9
 }
 
