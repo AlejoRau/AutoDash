@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
-import { Play, RefreshCw, Settings, CheckCircle, XCircle, Clock } from 'lucide-react'
+import { Play, RefreshCw, Settings, CheckCircle, XCircle, Clock, Workflow, Activity, PowerOff } from 'lucide-react'
 import type { N8nWorkflow } from '@/types'
 import N8nExecutionsDialog from '@/components/N8nExecutionsDialog'
 
@@ -61,6 +61,8 @@ export default function N8nPage() {
   })
 
   const workflows = workflowsData?.data ?? []
+  const activeCount = workflows.filter((w) => w.active).length
+  const inactiveCount = workflows.filter((w) => !w.active).length
 
   return (
     <AppLayout>
@@ -83,6 +85,44 @@ export default function N8nPage() {
             </Button>
           </div>
         </div>
+
+        {user?.n8nConfigured && !isLoading && workflows.length > 0 && (
+          <div className="grid grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Total</p>
+                    <p className="text-3xl font-bold mt-1">{workflows.length}</p>
+                  </div>
+                  <Workflow className="w-8 h-8 text-muted-foreground/40" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Activos</p>
+                    <p className="text-3xl font-bold mt-1 text-green-600 dark:text-green-400">{activeCount}</p>
+                  </div>
+                  <Activity className="w-8 h-8 text-green-500/30" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Inactivos</p>
+                    <p className="text-3xl font-bold mt-1 text-muted-foreground">{inactiveCount}</p>
+                  </div>
+                  <PowerOff className="w-8 h-8 text-muted-foreground/20" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {showSettings && (
           <Card>

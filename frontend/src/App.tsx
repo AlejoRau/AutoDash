@@ -27,7 +27,7 @@ export default function App() {
               <Route path="/n8n" element={<N8nPage />} />
               <Route path="/admin" element={<AdminPage />} />
             </Route>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<Navigate to="/n8n" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
           <Toaster />

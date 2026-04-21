@@ -96,13 +96,15 @@ export default function AutomationModal({ open, onClose, automation }: Props) {
           {triggerType === 'SCHEDULE' && (
             <div className="space-y-1">
               <Label>Expresión cron</Label>
-              <Input {...register('triggerConfig')} placeholder='{"cron":"0 * * * *"}' />
+              <Input {...register('triggerConfig')} placeholder="0 9 * * 1-5" />
+              <p className="text-xs text-muted-foreground">Ejemplo: <code>0 9 * * 1-5</code> = lunes a viernes a las 9am</p>
             </div>
           )}
           {triggerType === 'WEBHOOK' && (
             <div className="space-y-1">
               <Label>Webhook URL</Label>
-              <Input {...register('triggerConfig')} placeholder='{"url":"https://..."}' />
+              <Input {...register('triggerConfig')} placeholder="https://tu-n8n.com/webhook/..." />
+              <p className="text-xs text-muted-foreground">URL del webhook de n8n. Se ejecutará al presionar "Ejecutar".</p>
             </div>
           )}
           <div className="flex justify-end gap-2 pt-2">
