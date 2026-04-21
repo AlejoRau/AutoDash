@@ -9,7 +9,7 @@ export const n8nService = {
     api.get<N8nWorkflowsResponse>('/api/n8n/workflows').then((r) => r.data),
 
   getWorkflow: (id: string) =>
-    api.get<N8nWorkflow>(`/api/n8n/workflows/${id}`).then((r) => r.data),
+    api.get<N8nWorkflow>(`/api/n8n/workflows/${id}`).then((r) => r.data as N8nWorkflow),
 
   getExecutions: (workflowId: string) =>
     api.get<N8nExecutionsResponse>(`/api/n8n/workflows/${workflowId}/executions`).then((r) => r.data),

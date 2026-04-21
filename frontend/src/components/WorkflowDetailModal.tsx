@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { n8nService } from '@/services/n8n.service'
-import type { N8nWorkflow, N8nExecution } from '@/types'
+import type { N8nWorkflow, N8nWorkflowNode, N8nExecution } from '@/types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -69,11 +69,13 @@ export default function WorkflowDetailModal({ workflow, onClose }: Props) {
   const { data: detail, isLoading: loadingDetail } = useQuery({
     queryKey: ['n8n-workflow', workflow.id],
     queryFn: () => n8nService.getWorkflow(workflow.id),
-    onSuccess: (d) => {
-      const schedNode = d.nodes?.find((n) => n.type === 'n8n-nodes-base.scheduleTrigger')
-      if (schedNode) setScheduleHour(getScheduleHour(schedNode))
-    },
   })
+
+  useEffect(() => {
+    if (!detail) return
+    const schedNode = (detail as N8nWorkflow).nodes?.find((n: N8nWorkflowNode) => n.type === 'n8n-nodes-base.scheduleTrigger')
+    if (schedNode) setScheduleHour(getScheduleHour(schedNode))
+  }, [detail])
 
   const { data: execData, isLoading: loadingExecs } = useQuery({
     queryKey: ['n8n-executions', workflow.id],
@@ -93,14 +95,15 @@ export default function WorkflowDetailModal({ workflow, onClose }: Props) {
 
   function saveName() {
     if (!detail) return
-    updateMutation.mutate({ ...detail, name: nameValue } as Record<string, unknown>)
+    updateMutation.mutate({ ...(detail as object), name: nameValue } as Record<string, unknown>)
   }
 
   function saveSchedule() {
     if (!detail) return
+    const wf = detail as N8nWorkflow
     const updated = {
-      ...detail,
-      nodes: detail.nodes?.map((n) => {
+      ...(detail as object),
+      nodes: wf.nodes?.map((n: N8nWorkflowNode) => {
         if (n.type !== 'n8n-nodes-base.scheduleTrigger') return n
         return {
           ...n,
@@ -121,7 +124,7 @@ export default function WorkflowDetailModal({ workflow, onClose }: Props) {
   const errorCount = executions.filter((e) => e.status === 'error').length
   const successRate = executions.length > 0 ? Math.round((successCount / executions.length) * 100) : null
 
-  const nodes = detail?.nodes ?? workflow.nodes ?? []
+  const nodes = (detail as N8nWorkflow | undefined)?.nodes ?? workflow.nodes ?? []
   const scheduleNode = nodes.find((n) => n.type === 'n8n-nodes-base.scheduleTrigger')
 
   return (
@@ -174,7 +177,7 @@ export default function WorkflowDetailModal({ workflow, onClose }: Props) {
             ) : nodes.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-6">Sin nodos</p>
             ) : (
-              nodes.map((node, i) => {
+              nodes.map((node: N8nWorkflowNode, i: number) => {
                 const meta = getNodeMeta(node.type)
                 return (
                   <div key={node.id ?? i}>
