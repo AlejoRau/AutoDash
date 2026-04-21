@@ -55,10 +55,19 @@ export default function N8nPage() {
   })
 
   const runMutation = useMutation({
-    mutationFn: (id: string) => n8nService.run(id),
+    mutationFn: async (webhookUrl: string) => {
+      const res = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+      if (!res.ok) throw new Error('Failed')
+    },
     onSuccess: () => toast.success('Workflow ejecutado'),
     onError: () => toast.error('Error al ejecutar'),
   })
+
+  function getWebhookUrl(wf: import('@/types').N8nWorkflow): string | null {
+    const node = wf.nodes?.find((n) => n.type === 'n8n-nodes-base.webhook')
+    if (!node?.parameters?.path) return null
+    return `${user?.n8nUrl ?? ''}/webhook/${node.parameters.path}`
+  }
 
   const workflows = workflowsData?.data ?? []
   const activeCount = workflows.filter((w) => w.active).length
@@ -203,7 +212,9 @@ export default function N8nPage() {
                     </td>
                   </tr>
                 ) : (
-                  workflows.map((wf) => (
+                  workflows.map((wf) => {
+                    const webhookUrl = getWebhookUrl(wf)
+                    return (
                     <tr key={wf.id} className="border-t hover:bg-muted/20 transition-colors">
                       <td className="px-4 py-3 font-medium">{wf.name}</td>
                       <td className="px-4 py-3">
@@ -225,14 +236,16 @@ export default function N8nPage() {
                           >
                             <Clock className="w-4 h-4" />
                           </Button>
+                          {webhookUrl && (
                           <Button
                             variant="ghost" size="icon"
                             title="Ejecutar ahora"
-                            onClick={() => runMutation.mutate(wf.id)}
+                            onClick={() => runMutation.mutate(webhookUrl)}
                             disabled={runMutation.isPending}
                           >
                             <Play className="w-4 h-4 text-blue-600" />
                           </Button>
+                          )}
                           {wf.active ? (
                             <Button
                               variant="ghost" size="icon"
@@ -255,7 +268,7 @@ export default function N8nPage() {
                         </div>
                       </td>
                     </tr>
-                  ))
+                  )})
                 )}
               </tbody>
             </table>

@@ -15,6 +15,7 @@ public class UserProfileResponse {
     private final UserRole role;
     private final LocalDateTime createdAt;
     private final boolean n8nConfigured;
+    private final String n8nUrl;
 
     public UserProfileResponse(User user) {
         this.id = user.getId();
@@ -23,5 +24,6 @@ public class UserProfileResponse {
         this.role = user.getRole();
         this.createdAt = user.getCreatedAt();
         this.n8nConfigured = user.getN8nUrl() != null && user.getN8nApiKey() != null;
+        this.n8nUrl = user.getN8nUrl();
     }
 }

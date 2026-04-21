@@ -33,6 +33,13 @@ export interface UserProfile {
   role: 'USER' | 'ADMIN'
   createdAt: string
   n8nConfigured: boolean
+  n8nUrl?: string
+}
+
+export interface N8nWorkflowNode {
+  type: string
+  parameters: { path?: string; httpMethod?: string }
+  webhookId?: string
 }
 
 export interface N8nWorkflow {
@@ -42,6 +49,7 @@ export interface N8nWorkflow {
   createdAt: string
   updatedAt: string
   tags: { id: string; name: string }[]
+  nodes?: N8nWorkflowNode[]
 }
 
 export interface N8nExecution {
