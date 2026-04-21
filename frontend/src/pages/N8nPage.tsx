@@ -22,7 +22,7 @@ export default function N8nPage() {
   const [n8nApiKey, setN8nApiKey] = useState('')
   const [selectedWorkflow, setSelectedWorkflow] = useState<N8nWorkflow | null>(null)
 
-  const { data: workflowsData, isLoading, refetch } = useQuery({
+  const { data: workflowsData, isLoading, isError, refetch } = useQuery({
     queryKey: ['n8n-workflows'],
     queryFn: n8nService.getWorkflows,
     enabled: !!user?.n8nConfigured,
@@ -163,6 +163,16 @@ export default function N8nPage() {
         {!user?.n8nConfigured && !showSettings && (
           <div className="rounded-lg border border-dashed p-12 text-center">
             <p className="text-muted-foreground">Configurá tus credenciales de n8n para ver tus workflows</p>
+          </div>
+        )}
+
+        {user?.n8nConfigured && isError && !isLoading && (
+          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-8 text-center space-y-2">
+            <p className="font-medium">No se pudo conectar con n8n</p>
+            <p className="text-sm text-muted-foreground">Verificá que la URL y el API key sean correctos</p>
+            <button onClick={() => setShowSettings(true)} className="text-sm underline text-muted-foreground hover:text-foreground">
+              Actualizar credenciales
+            </button>
           </div>
         )}
 
