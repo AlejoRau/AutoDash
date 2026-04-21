@@ -93,30 +93,32 @@ export default function WorkflowDetailModal({ workflow, onClose }: Props) {
     onError: () => toast.error('No se pudo actualizar'),
   })
 
+  function buildPayload(wf: N8nWorkflow): Record<string, unknown> {
+    return { name: wf.name, nodes: wf.nodes, connections: wf.connections, settings: wf.settings }
+  }
+
   function saveName() {
     if (!detail) return
-    updateMutation.mutate({ ...(detail as object), name: nameValue } as Record<string, unknown>)
+    updateMutation.mutate(buildPayload({ ...(detail as N8nWorkflow), name: nameValue }))
   }
 
   function saveSchedule() {
     if (!detail) return
     const wf = detail as N8nWorkflow
-    const updated = {
-      ...(detail as object),
+    const updated: N8nWorkflow = {
+      ...wf,
       nodes: wf.nodes?.map((n: N8nWorkflowNode) => {
         if (n.type !== 'n8n-nodes-base.scheduleTrigger') return n
         return {
           ...n,
           parameters: {
             ...n.parameters,
-            rule: {
-              interval: [{ ...n.parameters.rule?.interval?.[0], triggerAtHour: scheduleHour }],
-            },
+            rule: { interval: [{ ...n.parameters.rule?.interval?.[0], triggerAtHour: scheduleHour }] },
           },
         }
       }),
     }
-    updateMutation.mutate(updated as Record<string, unknown>)
+    updateMutation.mutate(buildPayload(updated))
   }
 
   const executions = execData?.data ?? []
