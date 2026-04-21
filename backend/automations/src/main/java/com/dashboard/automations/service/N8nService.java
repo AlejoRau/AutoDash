@@ -30,6 +30,7 @@ public class N8nService {
             : request.getN8nUrl();
         user.setN8nUrl(url);
         user.setN8nApiKey(request.getN8nApiKey());
+        userRepository.save(user);
     }
 
     public Object getWorkflows(String email) {
