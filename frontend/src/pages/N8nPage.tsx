@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import { Play, RefreshCw, Settings, CheckCircle, XCircle, Clock, Workflow, Activity, PowerOff } from 'lucide-react'
 import type { N8nWorkflow } from '@/types'
 import N8nExecutionsDialog from '@/components/N8nExecutionsDialog'
+import WorkflowDetailModal from '@/components/WorkflowDetailModal'
 
 export default function N8nPage() {
   const { user, login, token } = useAuth()
@@ -21,6 +22,7 @@ export default function N8nPage() {
   const [n8nUrl, setN8nUrl] = useState('')
   const [n8nApiKey, setN8nApiKey] = useState('')
   const [selectedWorkflow, setSelectedWorkflow] = useState<N8nWorkflow | null>(null)
+  const [detailWorkflow, setDetailWorkflow] = useState<N8nWorkflow | null>(null)
 
   const { data: workflowsData, isLoading, isError, refetch } = useQuery({
     queryKey: ['n8n-workflows'],
@@ -216,7 +218,14 @@ export default function N8nPage() {
                     const webhookUrl = getWebhookUrl(wf)
                     return (
                     <tr key={wf.id} className="border-t hover:bg-muted/20 transition-colors">
-                      <td className="px-4 py-3 font-medium">{wf.name}</td>
+                      <td className="px-4 py-3 font-medium">
+                        <button
+                          className="hover:underline text-left"
+                          onClick={() => setDetailWorkflow(wf)}
+                        >
+                          {wf.name}
+                        </button>
+                      </td>
                       <td className="px-4 py-3">
                         <Badge variant="outline" className={wf.active
                           ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
@@ -280,6 +289,13 @@ export default function N8nPage() {
         <N8nExecutionsDialog
           workflow={selectedWorkflow}
           onClose={() => setSelectedWorkflow(null)}
+        />
+      )}
+
+      {detailWorkflow && (
+        <WorkflowDetailModal
+          workflow={detailWorkflow}
+          onClose={() => setDetailWorkflow(null)}
         />
       )}
     </AppLayout>

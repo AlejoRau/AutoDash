@@ -37,8 +37,25 @@ export interface UserProfile {
 }
 
 export interface N8nWorkflowNode {
+  id: string
+  name: string
   type: string
-  parameters: { path?: string; httpMethod?: string }
+  parameters: {
+    path?: string
+    httpMethod?: string
+    url?: string
+    rule?: {
+      interval?: Array<{
+        field?: string
+        hoursInterval?: number
+        triggerAtHour?: number
+        triggerAtMinute?: number
+        weekday?: number
+      }>
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any
+  }
   webhookId?: string
 }
 
@@ -50,6 +67,11 @@ export interface N8nWorkflow {
   updatedAt: string
   tags: { id: string; name: string }[]
   nodes?: N8nWorkflowNode[]
+  connections?: Record<string, unknown>
+  settings?: Record<string, unknown>
+  staticData?: unknown
+  pinData?: unknown
+  versionId?: string
 }
 
 export interface N8nExecution {

@@ -22,4 +22,7 @@ export const n8nService = {
 
   run: (workflowId: string, body?: Record<string, unknown>) =>
     api.post(`/api/n8n/workflows/${workflowId}/run`, body ?? {}).then((r) => r.data),
+
+  updateWorkflow: (workflowId: string, body: Record<string, unknown>) =>
+    api.put<N8nWorkflow>(`/api/n8n/workflows/${workflowId}`, body).then((r) => r.data),
 }

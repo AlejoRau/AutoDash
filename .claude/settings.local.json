@@ -4,7 +4,12 @@
       "Bash(git *)",
       "Bash(python3 *)",
       "Bash(grep -v \"import\\\\|//\")",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(xargs cat *)",
+      "Bash(xargs ls *)",
+      "Bash(curl *)",
+      "Bash(npx tsc *)",
+      "Bash(python -m json.tool)"
     ]
   }
 }
