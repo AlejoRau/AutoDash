@@ -69,7 +69,7 @@ export default function DashboardPage() {
 
   const { data: statsData } = useQuery({
     queryKey: ['automations-stats'],
-    queryFn: () => automationsService.findAll({ size: 500 }),
+    queryFn: () => automationsService.findAll({ size: 100 }),
     staleTime: 30_000,
   })
 
