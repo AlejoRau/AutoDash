@@ -48,6 +48,11 @@ public class N8nService {
         return proxyGet(user, "/api/v1/executions?workflowId=" + workflowId + "&limit=25");
     }
 
+    public Object getAllExecutions(String email) {
+        User user = getUserWithN8n(email);
+        return proxyGet(user, "/api/v1/executions?limit=100");
+    }
+
     public Object activateWorkflow(String email, String workflowId) {
         User user = getUserWithN8n(email);
         return proxyPost(user, "/api/v1/workflows/" + workflowId + "/activate", null);

@@ -38,6 +38,11 @@ public class N8nController {
         return ResponseEntity.ok(n8nService.getWorkflow(userDetails.getUsername(), workflowId));
     }
 
+    @GetMapping("/executions")
+    public ResponseEntity<Object> getAllExecutions(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(n8nService.getAllExecutions(userDetails.getUsername()));
+    }
+
     @GetMapping("/workflows/{workflowId}/executions")
     public ResponseEntity<Object> getExecutions(
             @AuthenticationPrincipal UserDetails userDetails,

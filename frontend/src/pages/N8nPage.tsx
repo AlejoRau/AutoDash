@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { n8nService } from '@/services/n8n.service'
 import { useAuth } from '@/context/AuthContext'
@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
-import { Play, RefreshCw, Settings, CheckCircle, XCircle, Clock, Workflow, Activity, PowerOff } from 'lucide-react'
+import { Play, RefreshCw, Settings, CheckCircle, XCircle, Clock, Workflow, Activity, PowerOff, BarChart2 } from 'lucide-react'
 import type { N8nWorkflow } from '@/types'
 import N8nExecutionsDialog from '@/components/N8nExecutionsDialog'
 import WorkflowDetailModal from '@/components/WorkflowDetailModal'
@@ -23,6 +23,7 @@ export default function N8nPage() {
   const [n8nApiKey, setN8nApiKey] = useState('')
   const [selectedWorkflow, setSelectedWorkflow] = useState<N8nWorkflow | null>(null)
   const [detailWorkflow, setDetailWorkflow] = useState<N8nWorkflow | null>(null)
+  const [execPeriod, setExecPeriod] = useState<'day' | 'week' | 'month'>('week')
 
   const { data: workflowsData, isLoading, isError, refetch } = useQuery({
     queryKey: ['n8n-workflows'],
@@ -71,9 +72,26 @@ export default function N8nPage() {
     return `${user?.n8nUrl ?? ''}/webhook/${node.parameters.path}`
   }
 
+  const { data: execData } = useQuery({
+    queryKey: ['n8n-all-executions'],
+    queryFn: n8nService.getAllExecutions,
+    enabled: !!user?.n8nConfigured,
+    retry: false,
+  })
+
   const workflows = workflowsData?.data ?? []
   const activeCount = workflows.filter((w) => w.active).length
   const inactiveCount = workflows.filter((w) => !w.active).length
+
+  const execCount = useMemo(() => {
+    const allExecs = execData?.data ?? []
+    const now = new Date()
+    const cutoff = new Date(now)
+    if (execPeriod === 'day') cutoff.setDate(now.getDate() - 1)
+    else if (execPeriod === 'week') cutoff.setDate(now.getDate() - 7)
+    else cutoff.setMonth(now.getMonth() - 1)
+    return allExecs.filter((e) => new Date(e.startedAt) >= cutoff).length
+  }, [execData, execPeriod])
 
   return (
     <AppLayout>
@@ -98,7 +116,7 @@ export default function N8nPage() {
         </div>
 
         {user?.n8nConfigured && !isLoading && workflows.length > 0 && (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <Card>
               <CardContent className="pt-5 pb-4">
                 <div className="flex items-center justify-between">
@@ -129,6 +147,28 @@ export default function N8nPage() {
                     <p className="text-3xl font-bold mt-1 text-muted-foreground">{inactiveCount}</p>
                   </div>
                   <PowerOff className="w-8 h-8 text-muted-foreground/20" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center justify-between mb-1">
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Ejecuciones</p>
+                    <p className="text-3xl font-bold mt-1">{execCount}</p>
+                  </div>
+                  <BarChart2 className="w-8 h-8 text-muted-foreground/30" />
+                </div>
+                <div className="flex gap-1 mt-2">
+                  {(['day', 'week', 'month'] as const).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setExecPeriod(p)}
+                      className={`text-xs px-2 py-0.5 rounded transition-colors ${execPeriod === p ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'}`}
+                    >
+                      {p === 'day' ? 'Hoy' : p === 'week' ? '7d' : '30d'}
+                    </button>
+                  ))}
                 </div>
               </CardContent>
             </Card>
