@@ -1,0 +1,67 @@
+{
+  "name": "TEMP - Seed Turnos Sheet",
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": {}
+    },
+    {
+      "id": "mock-data",
+      "name": "Mock Turnos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0],
+      "parameters": {
+        "jsCode": "const turnos = [\n  { Paciente: 'María González', Fecha: '2026-04-28', Hora: '09:00', Telefono: '+5491112345678', Estado: 'Confirmado', Notas: 'Control anual', FechaRegistro: '2026-04-20T10:00:00Z' },\n  { Paciente: 'Juan Pérez', Fecha: '2026-04-28', Hora: '10:00', Telefono: '+5491187654321', Estado: 'Confirmado', Notas: 'Extracción muela', FechaRegistro: '2026-04-20T11:00:00Z' },\n  { Paciente: 'Laura Martínez', Fecha: '2026-04-28', Hora: '11:30', Telefono: '+5491198765432', Estado: 'Confirmado', Notas: '', FechaRegistro: '2026-04-21T09:00:00Z' },\n  { Paciente: 'Carlos Ruiz', Fecha: '2026-04-29', Hora: '09:00', Telefono: '+5491165432198', Estado: 'Confirmado', Notas: 'Limpieza', FechaRegistro: '2026-04-21T10:00:00Z' },\n  { Paciente: 'Ana López', Fecha: '2026-04-29', Hora: '10:30', Telefono: '+5491176543219', Estado: 'Confirmado', Notas: 'Revisión brackets', FechaRegistro: '2026-04-21T11:00:00Z' },\n  { Paciente: 'Roberto Silva', Fecha: '2026-04-29', Hora: '14:00', Telefono: '+5491154321987', Estado: 'Cancelado', Notas: '', FechaRegistro: '2026-04-21T12:00:00Z' },\n  { Paciente: 'Sofía Torres', Fecha: '2026-04-30', Hora: '09:00', Telefono: '+5491143219876', Estado: 'Confirmado', Notas: 'Primera consulta', FechaRegistro: '2026-04-21T13:00:00Z' },\n  { Paciente: 'Diego Fernández', Fecha: '2026-04-30', Hora: '11:00', Telefono: '+5491132198765', Estado: 'Confirmado', Notas: 'Endodoncia', FechaRegistro: '2026-04-21T14:00:00Z' },\n  { Paciente: 'Valentina Gómez', Fecha: '2026-05-05', Hora: '09:30', Telefono: '+5491121987654', Estado: 'Confirmado', Notas: '', FechaRegistro: '2026-04-22T09:00:00Z' },\n  { Paciente: 'Martín Díaz', Fecha: '2026-05-05', Hora: '10:00', Telefono: '+5491110876543', Estado: 'Confirmado', Notas: 'Control post extracción', FechaRegistro: '2026-04-22T09:30:00Z' },\n  { Paciente: 'Lucía Romero', Fecha: '2026-05-06', Hora: '09:00', Telefono: '+5491199876543', Estado: 'Confirmado', Notas: '', FechaRegistro: '2026-04-22T10:00:00Z' },\n  { Paciente: 'Pablo Moreno', Fecha: '2026-05-06', Hora: '15:00', Telefono: '+5491188765432', Estado: 'Confirmado', Notas: 'Blanqueamiento', FechaRegistro: '2026-04-22T10:30:00Z' }\n];\nreturn turnos.map(t => ({ json: t }));"
+      }
+    },
+    {
+      "id": "write-sheets",
+      "name": "Escribir en Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [440, 0],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1g4U8Qgx1gZWk6zMVL_urCaljwwmfOrxKNTeHoNxnYRw",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Hoja 1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Paciente": "={{ $json.Paciente }}",
+            "Fecha": "={{ $json.Fecha }}",
+            "Hora": "={{ $json.Hora }}",
+            "Telefono": "={{ $json.Telefono }}",
+            "Estado": "={{ $json.Estado }}",
+            "Notas": "={{ $json.Notas }}",
+            "FechaRegistro": "={{ $json.FechaRegistro }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2HSmUgmm3XKOJCUq",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {"main": [[{"node": "Mock Turnos", "type": "main", "index": 0}]]},
+    "Mock Turnos": {"main": [[{"node": "Escribir en Sheets", "type": "main", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"}
+}

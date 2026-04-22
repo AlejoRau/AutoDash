@@ -9,7 +9,8 @@
       "Bash(xargs ls *)",
       "Bash(curl *)",
       "Bash(npx tsc *)",
-      "Bash(python -m json.tool)"
+      "Bash(python -m json.tool)",
+      "Bash(psql *)"
     ]
   }
 }

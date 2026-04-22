@@ -42,7 +42,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<Map<String, Object>> handleN8nClientError(HttpClientErrorException ex) {
-        return buildError(HttpStatus.valueOf(ex.getStatusCode().value()), "n8n error: " + ex.getStatusText());
+        String detail = ex.getResponseBodyAsString();
+        String msg = (detail != null && !detail.isBlank()) ? "n8n: " + detail : "n8n error: " + ex.getStatusText();
+        return buildError(HttpStatus.valueOf(ex.getStatusCode().value()), msg);
     }
 
     @ExceptionHandler(ResourceAccessException.class)

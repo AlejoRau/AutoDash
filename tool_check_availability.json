@@ -1,0 +1,69 @@
+{
+  "name": "TOOL - Verificar Disponibilidad",
+  "nodes": [
+    {
+      "id": "trigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": {}
+    },
+    {
+      "id": "read-sheets",
+      "name": "Leer Turnos del Dia",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [220, 0],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "1g4U8Qgx1gZWk6zMVL_urCaljwwmfOrxKNTeHoNxnYRw",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Turnos 2026 odontologia",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Fecha",
+              "lookupValue": "={{ $json.date }}"
+            },
+            {
+              "lookupColumn": "Estado",
+              "lookupValue": "Confirmado"
+            }
+          ]
+        },
+        "options": {
+          "returnAllMatches": true
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2HSmUgmm3XKOJCUq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "id": "format-result",
+      "name": "Formatear Slots Ocupados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0],
+      "parameters": {
+        "jsCode": "const date = $('Execute Workflow Trigger').first().json.date;\nconst items = $input.all();\n\nif (!items || items.length === 0 || !items[0].json.Hora) {\n  return [{ json: { date, occupied: [], message: `El dia ${date} no tiene turnos ocupados. Todos los horarios de 9:00 a 18:00 estan disponibles.` } }];\n}\n\nconst occupied = items\n  .filter(i => i.json.Hora)\n  .map(i => i.json.Hora)\n  .sort();\n\nconst allSlots = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];\nconst available = allSlots.filter(s => !occupied.includes(s));\n\nreturn [{ json: {\n  date,\n  occupied,\n  available,\n  message: `Para el ${date}: Ocupados: ${occupied.join(', ') || 'ninguno'}. Disponibles: ${available.join(', ')}.`\n}}];"
+      }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {"main": [[{"node": "Leer Turnos del Dia", "type": "main", "index": 0}]]},
+    "Leer Turnos del Dia": {"main": [[{"node": "Formatear Slots Ocupados", "type": "main", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"}
+}
