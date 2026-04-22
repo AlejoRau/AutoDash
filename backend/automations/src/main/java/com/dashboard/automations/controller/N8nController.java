@@ -72,6 +72,13 @@ public class N8nController {
         return ResponseEntity.ok(n8nService.runWorkflow(userDetails.getUsername(), workflowId, body));
     }
 
+    @PostMapping("/workflows")
+    public ResponseEntity<Object> createWorkflow(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody Map<String, Object> body) {
+        return ResponseEntity.ok(n8nService.createWorkflow(userDetails.getUsername(), body));
+    }
+
     @PutMapping("/workflows/{workflowId}")
     public ResponseEntity<Object> updateWorkflow(
             @AuthenticationPrincipal UserDetails userDetails,

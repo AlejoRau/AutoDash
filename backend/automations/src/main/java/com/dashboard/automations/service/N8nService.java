@@ -73,6 +73,11 @@ public class N8nService {
         return proxyPut(user, "/api/v1/workflows/" + workflowId, body);
     }
 
+    public Object createWorkflow(String email, Map<String, Object> body) {
+        User user = getUserWithN8n(email);
+        return proxyPost(user, "/api/v1/workflows", body);
+    }
+
     private Object proxyGet(User user, String path) {
         HttpHeaders headers = buildHeaders(user.getN8nApiKey());
         ResponseEntity<Object> response = restTemplate.exchange(
